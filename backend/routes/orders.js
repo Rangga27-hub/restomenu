@@ -4,14 +4,20 @@ const supabase = require('../supabase');
 
 // GET semua order (untuk dashboard owner)
 router.get('/', async (req, res) => {
-  const { data, error } = await supabase
+  const { start, end } = req.query;
+
+  let query = supabase
     .from('orders')
-    .select(`
-      *,
-      tables (table_number)
-    `)
+    .select('*, tables (table_number)')
     .order('created_at', { ascending: false });
 
+  if (start && end) {
+    query = query
+      .gte('created_at', new Date(start).toISOString())
+      .lte('created_at', new Date(end + 'T23:59:59').toISOString());
+  }
+
+  const { data, error } = await query;
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });

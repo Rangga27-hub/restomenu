@@ -32,3 +32,8 @@ export const updateOrderStatus = async (id, status) => {
   });
   return res.json();
 };
+
+export const getOrdersByDateRange = async (startDate, endDate) => {
+  const res = await fetch(`${BASE_URL}/orders?start=${startDate}&end=${endDate}`);
+  return res.json();
+};
